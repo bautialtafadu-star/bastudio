@@ -1,0 +1,15 @@
+bastudio/
+│
+├── index.html
+│
+└── assets/
+    ├── images/
+    │   ├── alberti/
+    │   ├── allout/
+    │   ├── allout-42km-buenos-aires/
+    │   ├── rojo/
+    │   ├── ba/
+    │   └── skate-y-bmx/
+    ├── covers/
+    └── ...
+
