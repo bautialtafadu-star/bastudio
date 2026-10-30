@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F5EFE1">
+<title>BASTUDIO</title>
+<style>
+:root{
+  --cream:#F5EFE1;
+  --red:#681313;
+  --red-soft:rgba(104,19,19,.42);
+  --red-faint:rgba(104,19,19,.13);
+  --line:rgba(104,19,19,.16);
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--cream)}
+body{margin:0;background:var(--cream);color:var(--red);font-family:Arial,Helvetica,sans-serif;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+img,video{display:block;max-width:100%}
+::selection{background:var(--red);color:var(--cream)}
+
+/* HEADER */
+.header{position:fixed;z-index:100;left:0;right:0;top:0;height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;pointer-events:none}
+.header a{pointer-events:auto;text-transform:uppercase;font-weight:700;font-size:11px;letter-spacing:.03em}
+.logo{font-size:21px!important;letter-spacing:-.04em!important;text-transform:lowercase!important}
+.nav{display:flex;gap:18px;align-items:center}
+
+/* CUSTOM CURSOR — rectangular like old BASTUDIO */
+@media(pointer:fine){html.custom-cursor,html.custom-cursor *{cursor:none!important}}
+.cursor{position:fixed;z-index:9999;left:0;top:0;transform:translate(-50%,-50%);min-width:92px;padding:10px 15px;background:var(--red);color:var(--cream);display:none;align-items:center;justify-content:center;pointer-events:none;transition:min-width .18s var(--ease),padding .18s var(--ease),opacity .18s;opacity:0}
+.custom-cursor .cursor{display:flex}.cursor.on{opacity:1}.cursor.active{min-width:118px;padding:12px 20px}
+.cursor span{font-size:11px;font-weight:700;letter-spacing:.01em;text-transform:lowercase}
+
+.page{min-height:100svh;display:none}.page.active{display:block}
+
+/* HOME — navigator left + live cover right */
+.home-stage{height:100svh;display:grid;grid-template-columns:minmax(390px,44vw) 1fr;padding-top:70px;overflow:hidden}
+.index-wrap{position:relative;height:calc(100svh - 70px);overflow:hidden;border-right:1px solid var(--line)}
+.project-index{position:absolute;left:34px;right:28px;top:0;will-change:transform;transition:transform .62s var(--ease)}
+.index-item{display:block;width:100%;text-align:left;text-transform:uppercase;font-weight:700;line-height:.88;color:rgba(104,19,19,.28);font-size:clamp(27px,3.15vw,58px);padding:7px 0;transition:font-size .48s var(--ease),color .35s,transform .48s var(--ease),opacity .35s;transform-origin:left center;white-space:normal}
+.index-item span{display:block}
+.index-item.active{color:var(--red);font-size:clamp(44px,5.25vw,91px);transform:translateX(7px)}
+.index-item.near{color:rgba(104,19,19,.55)}.index-item.far{opacity:.52}
+.preview{height:calc(100svh - 70px);padding:14px 20px 20px;opacity:0;transform:translateY(10px) scale(.994);transition:opacity .28s,transform .48s var(--ease)}
+.preview.show{opacity:1;transform:none}
+.preview-grid{height:100%;display:grid;grid-template-columns:minmax(0,1fr) clamp(96px,10vw,145px);gap:14px}
+.preview-main{position:relative;height:100%;overflow:hidden;background:var(--red-faint)}
+.preview-main img,.preview-main video{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
+.preview-main:hover img,.preview-main:hover video{transform:scale(1.025)}
+.preview-count{position:absolute;left:12px;bottom:11px;background:var(--cream);padding:5px 7px;font-size:9px;letter-spacing:.1em}
+.rail{display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.rail-item{height:calc((100% - 20px)/3);background:var(--red-faint);overflow:hidden}
+.rail-item img,.rail-item video{width:100%;height:100%;object-fit:cover}
+.placeholder{height:100%;display:flex;align-items:center;justify-content:center;text-align:center;border:1px dashed var(--line);font-size:10px;letter-spacing:.14em;line-height:1.6;padding:18px;text-transform:uppercase}
+.home-hint{position:fixed;left:24px;bottom:17px;font-size:8px;letter-spacing:.19em;z-index:20;text-transform:uppercase}
+.mobile-list{display:none}
+
+/* PROJECT — niki-inspired vertical gallery */
+.project-shell{min-height:100svh;padding-top:70px}
+.project-layout{display:grid;grid-template-columns:260px minmax(520px,1fr) 118px;gap:18px;min-height:calc(100svh - 70px);padding:18px 22px 42px}
+.project-info{position:sticky;top:88px;height:calc(100svh - 108px);display:flex;flex-direction:column;align-self:start}
+.arrows{display:flex;gap:20px;font-size:26px;line-height:1}.arrows a{transition:transform .2s}.arrows a:hover{transform:translateX(-3px)}.arrows a:last-child:hover{transform:translateX(3px)}
+.title-block{margin-top:auto;margin-bottom:auto}.title-block h1{font-size:clamp(35px,4.25vw,72px);line-height:.88;text-transform:uppercase;margin:0 0 12px;letter-spacing:-.055em}.title-block p{font-size:9px;letter-spacing:.16em;text-transform:uppercase}.back{font-size:9px;letter-spacing:.16em;text-transform:uppercase}
+.gallery{display:flex;flex-direction:column;gap:22px;align-items:center;padding:0 8px 12vh;min-width:0}
+.media{width:100%;margin:0;overflow:visible;background:transparent;display:flex;justify-content:center;align-items:center;min-height:0}
+.media img,.media video{display:block;width:auto;height:auto;max-width:100%;max-height:88svh;object-fit:contain;background:transparent;margin:0 auto}
+.media video{background:#000}
+.media.missing{display:none}
+.empty-gallery{min-height:68svh;width:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;border:1px dashed var(--line);text-align:center;text-transform:uppercase;padding:25px;gap:8px}.empty-gallery p{font-weight:700}.empty-gallery small{font-size:9px;letter-spacing:.12em}
+.thumbs{position:sticky;top:88px;height:calc(100svh - 108px);overflow:auto;display:flex;flex-direction:column;align-items:center;gap:10px;scrollbar-width:none;padding:0 2px}.thumbs::-webkit-scrollbar{display:none}.thumb{display:block;width:94px;overflow:hidden;background:transparent;border:0;padding:0;opacity:.62;transition:opacity .2s,transform .2s}.thumb:hover,.thumb.active{opacity:1;transform:scale(.98)}.thumb img,.thumb video{display:block;width:100%;height:auto;max-height:128px;object-fit:contain;background:transparent}.video-thumb{border:0;background:transparent}
+
+/* SOUND */
+.sound-consent{position:fixed;inset:0;z-index:300;background:var(--red);color:var(--cream);display:grid;place-items:center;padding:28px;transition:opacity .38s var(--ease)}
+.sound-consent.hide{opacity:0;pointer-events:none}.consent{max-width:780px;text-align:center}.music-note{font-size:38px}.consent p{font-size:9px;letter-spacing:.2em;text-transform:uppercase}.consent h2{font-size:clamp(34px,6vw,82px);line-height:.92;margin:20px 0;text-transform:uppercase;letter-spacing:-.045em}.meta{display:grid;gap:5px;margin:14px 0 22px;font-size:9px;letter-spacing:.08em;text-transform:uppercase}.actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.actions button{border:1px solid currentColor;padding:12px 15px;font-size:9px;letter-spacing:.12em;text-transform:uppercase}
+.now-playing{position:fixed;z-index:90;right:18px;bottom:16px;background:var(--red);color:var(--cream);display:flex;align-items:center;gap:9px;padding:9px 11px;max-width:390px}.np-copy{display:flex;flex-direction:column;text-align:left;min-width:0}.np-copy b{font-size:7px;letter-spacing:.15em}.np-copy em{font-size:8px;font-style:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:255px}.np-state{font-size:7px}.eq{height:13px;display:flex;align-items:flex-end;gap:2px}.eq i{width:2px;height:5px;background:currentColor}.playing .eq i:nth-child(1){animation:eq .5s infinite alternate}.playing .eq i:nth-child(2){animation:eq .7s infinite alternate}.playing .eq i:nth-child(3){animation:eq .45s infinite alternate}@keyframes eq{to{height:13px}}
+
+/* ABOUT / ARCHIVE */
+.simple-page{padding:112px 24px 48px}.simple-head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:30px}.simple-head h1{font-size:clamp(44px,8vw,128px);line-height:.84;margin:0;text-transform:uppercase;letter-spacing:-.06em}.simple-head span{font-size:9px;letter-spacing:.14em;text-transform:uppercase}.archive-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}.archive-item{grid-column:span 4;margin:0}.archive-item.wide{grid-column:span 8}.archive-item.tall{grid-column:span 4}.archive-item img,.archive-item video{width:100%;height:auto}.archive-empty{grid-column:1/-1;min-height:58svh;border:1px dashed var(--line);display:grid;place-items:center;text-align:center;letter-spacing:.14em;line-height:1.7;text-transform:uppercase;font-size:10px}.about-copy{max-width:1000px;font-size:clamp(28px,4vw,58px);line-height:1.01;text-transform:uppercase;letter-spacing:-.04em}.about-small{margin-top:50px;display:grid;grid-template-columns:1fr 1fr;gap:38px;font-size:12px;line-height:1.5}
+
+/* MOBILE 9:16 */
+@media(max-width:800px){
+  .header{height:56px;padding:0 13px}.nav{gap:10px}.nav a{font-size:8px}.logo{font-size:16px!important}.cursor{display:none!important}
+  .home-stage,.home-hint{display:none}.mobile-list{display:block;padding-top:56px;scroll-snap-type:y mandatory}
+  .mobile-card{height:calc(100svh - 56px);min-height:620px;position:relative;display:block;overflow:hidden;border-bottom:1px solid var(--line);scroll-snap-align:start;background:var(--red-faint)}
+  .mobile-cover{position:absolute;inset:0}.mobile-cover img,.mobile-cover video{width:100%;height:100%;object-fit:cover}
+  .mobile-cover::after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(transparent,rgba(104,19,19,.5))}
+  .mobile-copy{position:absolute;left:14px;right:14px;bottom:15px;color:var(--cream);z-index:2}.mobile-copy span{font-size:8px;letter-spacing:.14em}.mobile-copy h2{font-size:clamp(40px,12vw,64px);line-height:.86;margin:5px 0 0;text-transform:uppercase;letter-spacing:-.055em}
+  .mobile-card.is-placeholder .mobile-copy{color:var(--red)}.mobile-card.is-placeholder .mobile-cover::after{display:none}
+  .project-layout{display:block;padding:8px 8px 36px}.project-info{position:relative;top:auto;height:auto;min-height:28svh;padding:18px 2px}.title-block{margin:58px 0 24px}.title-block h1{font-size:14vw}.thumbs{display:none}.gallery{gap:14px;padding-bottom:20vh;align-items:center}.media{width:100%;padding:0 4px}.media img,.media video{width:auto;height:auto;max-width:100%;max-height:84svh;object-fit:contain;margin:0 auto}.media video{background:#000}
+  .simple-page{padding:82px 13px 36px}.simple-head{display:block}.simple-head span{display:block;margin-top:12px}.archive-grid{grid-template-columns:1fr 1fr;gap:7px}.archive-item,.archive-item.wide,.archive-item.tall{grid-column:auto}.about-small{grid-template-columns:1fr}.now-playing{left:8px;right:8px;bottom:8px;max-width:none;justify-content:space-between}.np-copy em{max-width:62vw}
+  .sound-consent{padding:20px}.consent h2{font-size:11vw}
+}
+</style>
+</head>
+<body>
+<header class="header">
+  <a href="#home" class="logo" data-nav="home">bastudio</a>
+  <nav class="nav">
+    <a href="#home" data-nav="home">projects</a>
+    <a href="#about" data-nav="about">about me</a>
+    <a href="#archive" data-nav="archive">archivo delta</a>
+  </nav>
+</header>
+<div class="cursor"><span>bastudio</span></div>
+
+<section id="home" class="page active">
+  <div class="home-stage">
+    <div class="index-wrap"><div class="project-index" id="project-index"></div></div>
+    <div class="preview" id="preview"></div>
+  </div>
+  <div class="mobile-list" id="mobile-list"></div>
+  <div class="home-hint">SCROLL / ↑ ↓ / ENTER</div>
+</section>
+<section id="project" class="page"><div id="project-root" class="project-shell"></div></section>
+<section id="about" class="page simple-page">
+  <div class="simple-head"><h1>About</h1><span>BASTUDIO / BUENOS AIRES</span></div>
+  <div class="about-copy">Fotografía, cine y contenido audiovisual. Trabajo alrededor del deporte, el movimiento, las personas y las historias que aparecen en el medio.</div>
+  <div class="about-small"><p>Bautista Altamirano<br>Buenos Aires, Argentina</p><p>Photography / Film / Direction<br>Instagram: @bastudio30</p></div>
+</section>
+<section id="archive" class="page simple-page">
+  <div class="simple-head"><h1>Archivo Delta</h1><span>PROYECTOS / COLABORACIONES</span></div>
+  <div class="archive-grid" id="archive-grid"></div>
+</section>
+
+<script>
+/* ================================================================
+   BASTUDIO — EDITÁS TODO ACÁ ADENTRO
+   ---------------------------------------------------------------
+   - Si cover:null, la web usa automáticamente la primera foto/video.
+   - Si querés otra portada: poné cover:{type:'image',src:'assets/covers/nombre.jpg'}
+   - También admite portada MP4: cover:{type:'video',src:'assets/covers/nombre.mp4'}
+   - GALERÍA AUTOMÁTICA: agregá archivos y ejecutá ACTUALIZAR_GALERIAS.command. No hace falta tocar el HTML.
+   - Fotos: pueden tener cualquier nombre. Ejecutá ACTUALIZAR_GALERIAS.command y aparecerán solas. Acepta .jpg/.jpeg/.png/.webp/.gif/.avif.
+   - Videos: nombrá v01.mp4, v02.mp4... hasta v100.mp4.
+   - Para música: guardá el archivo como music.mp3 dentro de la carpeta del proyecto.
+   ================================================================ */
+const PROJECTS = [
+  {slug:'allout-42km-buenos-aires', title:'ALLOUT 42KM\nBUENOS AIRES', cover:null, track:'PERMITIR MÚSICA', artist:'', album:'', audio:'assets/images/allout-42km-buenos-aires/music.mp3', media:[]},
+  {slug:'allout', title:'ALLOUT', cover:null, track:'PERMITIR MÚSICA', artist:'', album:'', audio:'assets/images/allout/music.mp3', media:[]},
+  {slug:'21k-buenos-aires', title:'21K BUENOS AIRES', cover:null, track:'LATIN MAFIA, Fred again.. — Te Estoy Correteando', artist:'Fred again..', album:'LATIN MAFIA, Fred again.. - Te Estoy Correteando', audio:'assets/images/21k-buenos-aires/music.mp3', media:[]},
+  {slug:'colner', title:'COLNER', cover:null, track:'Tame Impala — Borderline', artist:'Tame Impala', album:'', audio:'assets/images/colner/music.mp3', media:[]},
+  {slug:'doble-bragado', title:'DOBLE BRAGADO', cover:null, track:'PERMITIR MÚSICA', artist:'', album:'', audio:'assets/images/doble-bragado/music.mp3', media:[]},
+  {slug:'bailarina', title:'FUERA DE ESCENA', cover:null, track:'Mac Miller — Come Back to Earth', artist:'Mac Miller', album:'Swimming', audio:'assets/images/bailarina/music.mp3', media:[]},
+  {slug:'tour-de-france', title:'TOUR DE FRANCE', cover:null, track:'PERMITIR MÚSICA', artist:'', album:'', audio:'assets/images/tour-de-france/music.mp3', media:[]},
+  {slug:'ultima-estacion', title:'LA ÚLTIMA ESTACIÓN', cover:null, track:'PERMITIR MÚSICA', artist:'', album:'', audio:'assets/images/ultima-estacion/music.mp3', media:[]},
+  {slug:'aeroclub', title:'AEROCLUB', cover:null, track:'Lynyrd Skynyrd — Sweet Home Alabama', artist:'LynyrdSkynyrdVEVO', album:'Lynyrd Skynyrd - Sweet Home Alabama (Lyric Video)', audio:'assets/images/aeroclub/music.mp3', media:[]},
+  {slug:'alberti', title:'ALBERTI', cover:null, track:'Mac DeMarco — Chamber of Reflection', artist:'Mac DeMarco', album:'Salad Days', audio:'assets/images/alberti/music.mp3', media:[]},
+  {slug:'rojo', title:'ROJO', cover:null, track:'PERMITIR MÚSICA', artist:'', album:'', audio:'assets/images/rojo/music.mp3', media:[]},
+  {slug:'ba', title:'BA', cover:null, track:'PERMITIR MÚSICA', artist:'', album:'', audio:'assets/images/ba/music.mp3', media:[]},
+  {slug:'skate-bmx', title:'SKATE Y BMX', cover:null, track:'PERMITIR MÚSICA', artist:'', album:'', audio:'assets/images/skate-bmx/music.mp3', media:[]}
+];
+
+const ARCHIVO_DELTA = [
+  // Ejemplos:
+  // {type:'image',src:'assets/archive-delta/01.jpg'},
+  // {type:'video',src:'assets/archive-delta/02.mp4'}
+];
+
+const $=(s,c=document)=>c.querySelector(s), $$=(s,c=document)=>[...c.querySelectorAll(s)];
+const displayCover=p=>p.cover || p._autoCover || null;
+
+/* CURSOR */
+const cur=$('.cursor');
+if(cur&&matchMedia('(pointer:fine)').matches){
+  document.documentElement.classList.add('custom-cursor');cur.classList.add('on');
+  addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px'});
+  addEventListener('mouseleave',()=>cur.classList.remove('on'));addEventListener('mouseenter',()=>cur.classList.add('on'));
+  document.addEventListener('mouseover',e=>{const hit=e.target.closest('a,button,video');cur.classList.toggle('active',!!hit);cur.querySelector('span').textContent=hit?(hit.closest('.index-item')?'view':hit.tagName==='VIDEO'?'play':'open'):'bastudio'});
+  document.addEventListener('mouseout',e=>{if(!e.relatedTarget||!e.relatedTarget.closest?.('a,button,video')){cur.classList.remove('active');cur.querySelector('span').textContent='bastudio'}});
+}
+
+function mediaHTML(m){
+  if(!m)return `<div class="placeholder">AGREGÁ PORTADA<br>EN assets/covers/</div>`;
+  if(m.type==='video')return `<video src="${m.src}" autoplay muted loop playsinline preload="metadata"></video>`;
+  return `<img src="${m.src}" alt="">`;
+}
+function projectUrl(slug){return '#project='+encodeURIComponent(slug)}
+function showPage(id){$$('.page').forEach(p=>p.classList.toggle('active',p.id===id));scrollTo(0,0)}
+let active=0,locked=false;
+
+async function buildHome(){
+  const idx=$('#project-index'),mob=$('#mobile-list');idx.innerHTML='';mob.innerHTML='';
+  // Detecta automáticamente la primera foto/video real de cada carpeta para usarla como portada temporal.
+  await Promise.all(PROJECTS.map(async p=>{ if(!p.cover){ const first=await discoverFirstMedia(p.slug); p._autoCover=first; } }));
+  PROJECTS.forEach((p,i)=>{
+    const cover=displayCover(p);
+    const b=document.createElement('button');b.className='index-item';b.innerHTML=p.title.split('\n').map(x=>`<span>${x}</span>`).join('');
+    b.onmouseenter=()=>setActive(i,false);b.onclick=()=>location.hash='project='+encodeURIComponent(p.slug);idx.appendChild(b);
+    const a=document.createElement('a');a.href=projectUrl(p.slug);a.className='mobile-card'+(!cover?' is-placeholder':'');
+    a.innerHTML=`<div class="mobile-cover">${mediaHTML(cover)}</div><div class="mobile-copy"><span>${String(i+1).padStart(2,'0')}</span><h2>${p.title.replace(/\n/g,'<br>')}</h2></div>`;mob.appendChild(a);
+  });setActive(0,false);
+}
+function setActive(i,animate=true){
+  active=(i+PROJECTS.length)%PROJECTS.length;const items=$$('.index-item');
+  items.forEach((el,n)=>{const d=Math.abs(n-active);el.classList.toggle('active',n===active);el.classList.toggle('near',d===1);el.classList.toggle('far',d>2)});
+  requestAnimationFrame(()=>{const item=items[active],root=$('#project-index');if(item){const center=root.parentElement.clientHeight/2-item.offsetHeight/2;root.style.transform=`translateY(${center-item.offsetTop}px)`}});
+  const p=PROJECTS[active],cover=displayCover(p),rail=(p.media||[]).slice(1,4),pv=$('#preview');pv.classList.remove('show');
+  setTimeout(()=>{pv.innerHTML=`<div class="preview-grid"><a class="preview-main" href="${projectUrl(p.slug)}">${mediaHTML(cover)}<span class="preview-count">${String(active+1).padStart(2,'0')} / ${String(PROJECTS.length).padStart(2,'0')}</span></a><div class="rail">${[0,1,2].map(k=>`<div class="rail-item">${rail[k]?mediaHTML(rail[k]):''}</div>`).join('')}</div></div>`;pv.classList.add('show')},animate?90:0);
+}
+function step(d){if(locked)return;locked=true;setActive(active+d,true);setTimeout(()=>locked=false,700)}
+let wheelAccum=0, wheelTimer=null;
+$('#home').addEventListener('wheel',e=>{
+  if(matchMedia('(max-width:800px)').matches)return;
+  e.preventDefault();
+  const d=Math.abs(e.deltaY)>Math.abs(e.deltaX)?e.deltaY:e.deltaX;
+  wheelAccum+=d;
+  clearTimeout(wheelTimer);wheelTimer=setTimeout(()=>wheelAccum=0,240);
+  // Sensibilidad MUCHO más baja: hace falta un gesto claro del mouse/trackpad para cambiar de proyecto.
+  if(Math.abs(wheelAccum)>=145){const dir=wheelAccum>0?1:-1;wheelAccum=0;step(dir)}
+},{passive:false});
+addEventListener('keydown',e=>{if(!$('#home').classList.contains('active'))return;if(['ArrowDown','ArrowRight'].includes(e.key))step(1);if(['ArrowUp','ArrowLeft'].includes(e.key))step(-1);if(e.key==='Enter')location.hash='project='+encodeURIComponent(PROJECTS[active].slug)});
+
+
+function probeImage(base, extensions=['jpg','JPG','jpeg','JPEG','png','PNG','webp','WEBP']){
+  return new Promise(resolve=>{
+    let i=0;
+    const tryNext=()=>{
+      if(i>=extensions.length){resolve(null);return}
+      const src=`${base}.${extensions[i++]}`;
+      const img=new Image();
+      img.onload=()=>resolve({type:'image',src});
+      img.onerror=tryNext;
+      img.src=src;
+    };
+    tryNext();
+  });
+}
+function probeVideoCandidates(candidates){
+  return new Promise(resolve=>{
+    let i=0, current=null, timer=null;
+    const cleanup=()=>{ if(timer) clearTimeout(timer); if(current){ current.onloadedmetadata=null; current.onerror=null; current.removeAttribute('src'); try{current.load()}catch(e){} } };
+    const tryNext=()=>{
+      cleanup();
+      if(i>=candidates.length){resolve(null);return}
+      const src=candidates[i++];
+      const v=document.createElement('video'); current=v;
+      let done=false;
+      const ok=()=>{ if(done)return; done=true; cleanup(); resolve({type:'video',src}); };
+      const fail=()=>{ if(done)return; done=true; cleanup(); tryNext(); };
+      v.preload='metadata'; v.muted=true; v.onloadedmetadata=ok; v.onerror=fail; v.src=src;
+      timer=setTimeout(fail,650);
+    };
+    tryNext();
+  });
+}
+async function probeNumberedImage(slug,i){
+  const n2=String(i).padStart(2,'0');
+  const n3=String(i).padStart(3,'0');
+  for(const n of [n2,n3,String(i)]){
+    const m=await probeImage(`assets/images/${slug}/${n}`);
+    if(m) return m;
+  }
+  return null;
+}
+async function probeNumberedVideo(slug,i){
+  const n2=String(i).padStart(2,'0');
+  const n3=String(i).padStart(3,'0');
+  const bases=[n2,n3,String(i),`v${n2}`,`v${n3}`,`v${i}`];
+  const exts=['mp4','MP4','mov','MOV'];
+  const candidates=[];
+  for(const b of bases) for(const e of exts) candidates.push(`assets/images/${slug}/${b}.${e}`);
+  return await probeVideoCandidates(candidates);
+}
+async function discoverFirstMedia(slug){
+  // Portada automática: 01.jpg (o 001/1) y luego 01.mp4 / v01.mp4.
+  const img=await probeNumberedImage(slug,1);
+  if(img) return img;
+  return await probeNumberedVideo(slug,1);
+}
+async function discoverMedia(slug,maxImages=500,maxVideos=200){
+  /*
+    SIN MANIFEST / SIN ACTUALIZADOR.
+    El HTML busca directamente archivos numerados dentro de la carpeta.
+    Fotos: 01.jpg, 02.jpg, 03.jpg ... (también JPG/PNG/WEBP, 001.jpg o 1.jpg)
+    Videos: 01.mp4 o v01.mp4, v02.mp4 ... (también MOV)
+    No se corta en 8: continúa hasta encontrar 12 números consecutivos vacíos.
+  */
+  const found=[];
+  let misses=0, seenAny=false;
+  for(let i=1;i<=maxImages;i++){
+    const m=await probeNumberedImage(slug,i);
+    if(m){ found.push(m); misses=0; seenAny=true; }
+    else { misses++; if(misses>=12) break; }
+  }
+
+  // Videos se buscan aparte para conservar compatibilidad con v01.mp4, v02.mp4...
+  misses=0; let seenVideo=false;
+  for(let i=1;i<=maxVideos;i++){
+    const m=await probeNumberedVideo(slug,i);
+    if(m){
+      // Evita duplicar un 01.mp4 si ya entró por otra ruta futura.
+      if(!found.some(x=>x.src===m.src)) found.push(m);
+      misses=0; seenVideo=true;
+    } else {
+      misses++;
+      if(misses>=8) break;
+    }
+  }
+  return found;
+}
+function renderProjectMedia(med,p){
+  const gallery=$('.gallery'),thumbs=$('.thumbs');
+  gallery.innerHTML='';thumbs.innerHTML='';
+  if(!med.length){
+    gallery.innerHTML='<div class="empty-gallery"><p>AGREGÁ TUS FOTOS</p><small>01.jpg · 02.jpg · 03.jpg … / v01.mp4 · v02.mp4 …</small></div>';
+    return;
+  }
+  med.forEach((m,k)=>{
+    const fig=document.createElement('figure');fig.className='media';fig.id=`m${k}`;
+    if(m.type==='video'){
+      const v=document.createElement('video');v.controls=true;v.playsInline=true;v.preload='metadata';v.src=m.src;fig.appendChild(v);
+    }else{
+      const img=document.createElement('img');img.loading='lazy';img.src=m.src;img.alt=p.title.replace(/\n/g,' ');fig.appendChild(img);
+    }
+    gallery.appendChild(fig);
+    const b=document.createElement('button');b.className='thumb'+(m.type==='video'?' video-thumb':'');b.dataset.t=`m${k}`;
+    if(m.type==='video'){
+      const v=document.createElement('video');v.muted=true;v.playsInline=true;v.preload='metadata';v.src=m.src;b.appendChild(v);
+    }else{
+      const img=document.createElement('img');img.src=m.src;img.alt='';b.appendChild(img);
+    }
+    b.onclick=()=>fig.scrollIntoView({behavior:'smooth',block:'center'});
+    thumbs.appendChild(b);
+  });
+  // Marca la miniatura del elemento que está más visible.
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){$$('.thumb').forEach(x=>x.classList.remove('active'));document.querySelector(`[data-t="${e.target.id}"]`)?.classList.add('active')}})
+  },{threshold:.55});
+  $$('.media').forEach(x=>obs.observe(x));
+}
+async function openProject(slug){
+  const i=Math.max(0,PROJECTS.findIndex(p=>p.slug===slug)),p=PROJECTS[i],prev=PROJECTS[(i-1+PROJECTS.length)%PROJECTS.length],next=PROJECTS[(i+1)%PROJECTS.length],root=$('#project-root');
+  root.innerHTML=`
+    <div class="sound-consent" id="sound-consent"><div class="consent"><div class="music-note">♪</div><p>ESTE PROYECTO TIENE SONIDO</p><h2>${p.track||'PERMITIR MÚSICA'}</h2><div class="meta">${p.artist?`<span>ARTISTA: ${p.artist}</span>`:''}${p.album?`<span>ÁLBUM: ${p.album}</span>`:''}</div><div class="actions"><button id="yes">ENTRAR CON SONIDO</button><button id="no">ENTRAR SIN SONIDO</button></div></div></div>
+    <audio id="project-audio" src="${p.audio||''}" loop preload="auto"></audio>
+    <div class="project-layout">
+      <aside class="project-info"><div class="arrows"><a href="${projectUrl(prev.slug)}">←</a><a href="${projectUrl(next.slug)}">→</a></div><div class="title-block"><h1>${p.title.replace(/\n/g,'<br>')}</h1><p>BASTUDIO / 2026</p></div><a href="#home" class="back">BACK TO PROJECTS</a></aside>
+      <main class="gallery"><div class="empty-gallery"><p>CARGANDO PROYECTO</p></div></main><aside class="thumbs"></aside>
+    </div>
+    <button class="now-playing" id="player"><span class="eq"><i></i><i></i><i></i></span><span class="np-copy"><b>NOW PLAYING</b><em>${p.track||'PERMITIR MÚSICA'}</em></span><span class="np-state" id="state">PLAY</span></button>`;
+  showPage('project');document.title=p.title.replace(/\n/g,' ')+' — BASTUDIO';
+  const a=$('#project-audio'),player=$('#player'),state=$('#state');let playing=false,resume=false;
+  const sync=()=>{player.classList.toggle('playing',playing);state.textContent=playing?'PAUSE':'PLAY'};
+  const play=async()=>{try{await a.play();playing=true}catch(e){playing=false}sync()};
+  $('#yes').onclick=async()=>{await play();$('#sound-consent').classList.add('hide');setTimeout(()=>$('#sound-consent')?.remove(),380)};
+  $('#no').onclick=()=>{a.pause();playing=false;sync();$('#sound-consent').classList.add('hide');setTimeout(()=>$('#sound-consent')?.remove(),380)};
+  player.onclick=async()=>{if(playing){a.pause();playing=false;sync()}else await play()};
+  const med=await discoverMedia(p.slug,500,200);
+  // Si el usuario cambió de página mientras buscábamos archivos, no renderizamos sobre otra vista.
+  if(!location.hash.includes('project='+encodeURIComponent(slug)) && !location.hash.includes('project='+slug)) return;
+  renderProjectMedia(med,p);
+  $$('.media video').forEach(v=>{v.addEventListener('play',()=>{resume=playing;if(playing){a.pause();playing=false;sync()}});const back=async()=>{if(resume){resume=false;await play()}};v.addEventListener('pause',back);v.addEventListener('ended',back)});
+}
+
+function buildArchive(){
+  const g=$('#archive-grid');g.innerHTML='';
+  if(!ARCHIVO_DELTA.length){g.innerHTML='<div class="archive-empty">ARCHIVO EN CONSTRUCCIÓN<br>AGREGÁ FOTOS Y VIDEOS EN EL MISMO index.html</div>';return}
+  ARCHIVO_DELTA.forEach((m,i)=>{const f=document.createElement('figure');f.className='archive-item '+(i%5===0?'wide':i%3===0?'tall':'');f.innerHTML=m.type==='video'?`<video controls playsinline src="${m.src}"></video>`:`<img loading="lazy" src="${m.src}" alt="Archivo Delta">`;g.appendChild(f)});
+}
+function route(){
+  const h=location.hash.replace(/^#/,'')||'home';
+  if(h.startsWith('project=')){openProject(decodeURIComponent(h.split('=').slice(1).join('=')));return}
+  if(h==='archive'){buildArchive();showPage('archive');document.title='Archivo Delta — BASTUDIO';return}
+  if(h==='about'){showPage('about');document.title='About — BASTUDIO';return}
+  showPage('home');document.title='BASTUDIO';setTimeout(()=>setActive(active,false),20)
+}
+buildHome();buildArchive();addEventListener('hashchange',route);route();
+</script>
+</body>
+</html>
